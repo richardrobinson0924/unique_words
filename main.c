@@ -6,6 +6,8 @@
 
 #define MAX_WORDS 1000
 #define MAX_STRING 101
+#define true  1
+#define false 0
 
 /**
  * A typedef struct for the WordArray, which includes a word (string) field and a frequency (int) field
@@ -31,7 +33,7 @@ static int file_index = 0;
 FileArray file_array[100];
 
 /**
- * Inserts a string {@code word} into an array of WordArrays {@code words}, and stores the total number of unique words in pointer n. If the word already exists, the frequency of the word struct element is incremented. Otherwise, the word is unique and added to the WordArray array, with its frequency initiated to 0.
+ * Inserts a string {@code word} into an array of WordArrays {@code words}, and stores the total number of unique words in pointer n. If the word already exists, the frequency of the word struct element is incremented. Otherwise, the word is unique and added to the WordArray array, with its frequency initiated to 1.
  *
  * Note, {@code n} must be first initialized (typically to 0) in the caller to store the number.
  *
@@ -39,19 +41,18 @@ FileArray file_array[100];
  * @param n a pointer to the variable which stores the number of unique words thus far, amd acts as a pseudo-global variable
  * @param word a string within the array of strings
  */
-void insert_word(WordArray *words, int *n, char *word) {
-	int is_unique = 1;
+void insert_word(WordArray *words, int *size, char *word) {
+	int is_unique = true;
 
-	for (int i = 0; i < *n; i++) {
-		if (strcmp(word, words[i].word) == 0) {
+	for (int i = 0; i < *size; i++)
+		if (!strcmp(word, words[i].word)) {
 			words[i].freq++;
-			is_unique = 0;
+			is_unique = false;
 		}
-	}
 
 	if (is_unique) {
-		strcpy(words[*n].word, word);
-		words[(*n)++].freq = 1;
+		strcpy(words[*size].word, word);
+		words[(*size)++].freq = 1;
 	}
 }
 
