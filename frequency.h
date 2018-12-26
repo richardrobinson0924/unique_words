@@ -48,38 +48,17 @@ FileArray file_array[100];
  * @param n a pointer to the variable which stores the number of unique words thus far, amd acts as a pseudo-global variable
  * @param word a string within the array of strings
  */
-void insert_word(WordArray *words, int *size, char *word) {
-	int is_unique = true;
-
-	for (int i = 0; i < *size; i++)
-		if (!strcmp(word, words[i].word)) {
-			words[i].freq++;
-			is_unique = false;
-		}
-
-	if (is_unique) {
-		strcpy(words[*size].word, word);
-		words[(*size)++].freq = 1;
-	}
-}
+void insert_word(WordArray *words, int *size, char *word);
 
 /**
  * A comparator function for the qsort function for WordArrays. Given two WordArrays, this function sorts an array of WordArrays by decreasing frequency
  */
-int freq_cmp(WordArray *a, WordArray *b) {
-	return a->freq < b->freq ? 1 :
-	       a->freq > b->freq ? -1 :
-	       strcmp(a->word, b->word);
-}
+int freq_cmp(WordArray *a, WordArray *b);
 
 /**
  * A comparator function for the qsort function for FileArrays. Given two WordArrays, this function sorts an array of WordArrays by decreasing number of unique words
  */
-int file_cmp(FileArray *a, FileArray *b) {
-	return a->num < b->num ? 1 :
-	       a->num > b->num ? -1 :
-	       0;
-}
+int file_cmp(FileArray *a, FileArray *b);
 
 /**
  * Sorts {@code arr} struct elements by frequency. Then, for each file, stores the filename, number of unique words, and the median word into a FileArray object
@@ -89,15 +68,7 @@ int file_cmp(FileArray *a, FileArray *b) {
  * @param n the number of unique words
  * @param arr the WordArray struct array of words, sorted by frequency
  */
-void insert_arr(FileArray *farr, char *string, int n, WordArray *arr) {
-	qsort(arr, (size_t) n, sizeof(WordArray), (int (*)(const void *, const void *)) freq_cmp);
-
-	strcpy(farr[file_index].filename, string);
-	strcpy(farr[file_index].median_word, arr[n / 2].word);
-	farr[file_index].num = n;
-
-	file_index++;
-}
+void insert_arr(FileArray *farr, char *string, int n, WordArray *arr);
 
 /**
  * The main threaded function which executes upon each file in the argument list. Scans the associated filename passed to it, and generates a sorted list of WordArray objects from the strings in the file.
@@ -107,22 +78,6 @@ void insert_arr(FileArray *farr, char *string, int n, WordArray *arr) {
  * @param vargp the passed parameter from the {@code pthread_create()} function, the string filename command line argument taken as a pointer (ultimately casted to a regular string)
  * @return NULL
  */
-void *getMedianWord(void *vargp) {
-	char *filename = *(char **) vargp;
-	WordArray word_array[MAX_WORDS];
-
-	FILE *fp = fopen(filename, "r");
-	char word[101];
-
-	int n = 0;
-	while (!feof(fp)) {
-		fscanf(fp, "%s", word);
-		insert_word(word_array, &n, word);
-	}
-
-	insert_arr(file_array, filename, n, word_array);
-
-	return NULL;
-}
+void *getMedianWord(void *vargp);
 
 #endif //UNIQUE_WORDS_FREQUENCY_H
