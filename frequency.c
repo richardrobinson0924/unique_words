@@ -59,5 +59,5 @@ void *getMedianWord(void *vargp) {
 
 	insert_arr(file_array, filename, n, word_array);
 
-	return NULL;
+	pthread_exit(NULL);
 }

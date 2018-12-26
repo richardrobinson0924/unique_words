@@ -26,5 +26,5 @@ int main(int argc, char **argv) {
 		       file_array[k].median_word
 		);
 
-	return 0;
+	pthread_exit(NULL);
 }
