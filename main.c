@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
 		pthread_join(tid[i], NULL);
 	}
 
-	qsort(file_array, (size_t) file_index, sizeof(FileArray), (int (*)(const void *, const void *)) file_cmp);
+	qsort(file_array, (size_t) (argc - 1), sizeof(FileArray), (int (*)(const void *, const void *)) file_cmp);
 
 	for (int k = 0; k < argc - 1; ++k) {
 		printf("\n%s %d %s", file_array[k].filename, file_array[k].num, file_array[k].median_word);
