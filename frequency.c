@@ -31,7 +31,11 @@ int file_cmp(FileArray *a, FileArray *b) {
 }
 
 void insert_arr(FileArray *farr, char *string, int n, WordArray *arr) {
-	qsort(arr, (size_t) n, sizeof(WordArray), (int (*)(const void *, const void *)) freq_cmp);
+	qsort(arr,
+	      (size_t) n,
+	      sizeof(WordArray),
+	      (int (*)(const void *, const void *)) freq_cmp
+	);
 
 	strcpy(farr[file_index].filename, string);
 	strcpy(farr[file_index].median_word, arr[n / 2].word);
