@@ -45,7 +45,7 @@ void insert_arr(FileArray *farr, char *string, int n, WordArray *arr) {
 }
 
 void *getMedianWord(void *vargp) {
-	char *filename = *(char **) vargp;
+	const char *filename = vargp;
 	WordArray word_array[MAX_WORDS];
 
 	FILE *fp = fopen(filename, "r");
