@@ -1,26 +1,40 @@
 #include "frequency.h"
-#include <stdlib.h>
 
-/**
- * The main function. Runs {@code getMedianWord()} in parallel threads for each file, then outputs the sorted elements in FileArray array.
- */
-int main(int argc, char **argv) {
-	pthread_t tid[argc];
+FileInfo get_median_word(void *vargp) {
+	const char *filename = vargp;
+	WordInfo word_array[MAX_WORDS];
 
-	for (int i = 1; i < argc; ++i) {
-		pthread_create(&tid[i], NULL, get_median_word, argv[i]);
+	FILE *fp = fopen(filename, "r");
+	char word[MAX_STRING];
+
+	int n = 0;
+	while (!feof(fp)) {
+		fscanf(fp, "%s", word);
+		insert_word(word_array, &n, word);
 	}
 
-	for (int j = 1; j < argc; ++j) {
-		pthread_join(tid[j], NULL);
-	}
+	qsort(word_array, (size_t) n, sizeof(WordInfo), freq_cmp);
 
-	qsort(file_array, (size_t) (argc - 1), sizeof(FileInfo), file_cmp);
+	FileInfo f;
+	strcpy(f.filename, filename);
+	strcpy(f.median_word, word_array[n/2].word);
+	f.num = n;
 
-	for (int k = 0; k < argc - 1; ++k)
-		printf("\n%s %d %s", file_array[k].filename, file_array[k].num, file_array[k].median_word);
-
-	pthread_exit(NULL);
+	return f;
 }
 
+int main(int argc, char *argv[]) {
+	file_array_ptr = mmap(0, MAX_WORDS * sizeof(FileInfo), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
+	for (int i = 0; i < argc - 1; i++) {
+		if (fork() == 0) {
+			file_array_ptr[i] = get_median_word(argv[i + 1]);
+			exit(0);
+		} else {
+			usleep(30000);
+		}
+	}
+
+	print_array(file_array_ptr, argc - 1);
+	return 0;
+}
