@@ -3,7 +3,7 @@
  */
 #include "frequency.h"
 
-void insert_word(WordArray *words, int *size, char *word) {
+void insert_word(WordInfo *words, int *size, char *word) {
 	int is_unique = true;
 
 	for (int i = 0; i < *size; i++)
@@ -18,24 +18,26 @@ void insert_word(WordArray *words, int *size, char *word) {
 	}
 }
 
-int freq_cmp(WordArray *a, WordArray *b) {
-	return a->freq < b->freq ? 1 :
-	       a->freq > b->freq ? -1 :
-	       strcmp(a->word, b->word);
+int freq_cmp(const void *a, const void *b) {
+	WordInfo *word_a = (WordInfo *) a;
+	WordInfo *word_b = (WordInfo *) b;
+
+	return word_a->freq < word_b->freq ? 1 :
+	       word_a->freq > word_b->freq ? -1 :
+	       strcmp(word_a->word, word_b->word);
 }
 
-int file_cmp(FileArray *a, FileArray *b) {
-	return a->num < b->num ? 1 :
-	       a->num > b->num ? -1 :
+int file_cmp(const void *a, const void *b) {
+	FileInfo *file_a = (FileInfo *) a;
+	FileInfo *file_b = (FileInfo *) b;
+
+	return file_a->num < file_b->num ? 1 :
+	       file_a->num > file_b->num ? -1 :
 	       0;
 }
 
-void insert_arr(FileArray *farr, char *string, int n, WordArray *arr) {
-	qsort(arr,
-	      (size_t) n,
-	      sizeof(WordArray),
-	      (int (*)(const void *, const void *)) freq_cmp
-	);
+void insert_arr(FileInfo *farr, const char *string, int n, WordInfo *arr) {
+	qsort(arr, (size_t) n, sizeof(WordInfo), freq_cmp);
 
 	strcpy(farr[file_index].filename, string);
 	strcpy(farr[file_index].median_word, arr[n / 2].word);
@@ -44,9 +46,9 @@ void insert_arr(FileArray *farr, char *string, int n, WordArray *arr) {
 	file_index++;
 }
 
-void *getMedianWord(void *vargp) {
+void *get_median_word(void *vargp) {
 	const char *filename = vargp;
-	WordArray word_array[MAX_WORDS];
+	WordInfo word_array[MAX_WORDS];
 
 	FILE *fp = fopen(filename, "r");
 	char word[101];
