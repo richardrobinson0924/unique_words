@@ -15,6 +15,9 @@
 #define true  1
 #define false 0
 
+/**
+ * A structure which contains a field for a document filename, the number of unique words in the document, and the median word of the document
+ */
 typedef struct {
 	char filename[MAX_WORDS];
 	int num;
